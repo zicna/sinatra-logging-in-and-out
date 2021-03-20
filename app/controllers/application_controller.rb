@@ -12,19 +12,31 @@ class ApplicationController < Sinatra::Base
 
   post '/login' do
     #binding.pry
-    @user = User.find_by(username: params["username"])
-    if @user
-      #binding.pry
+    @user = User.find_by(username: params[:username])
+    if @user && @user.password == params[:password]
       session[:user_id] = @user.id
       redirect '/account'
+    else 
+      #binding.pry
+      erb :error
     end
-    erb :error
+    
   end
 
   get '/account' do
+    #@user = User.find_by(session[:user_id])
     #binding.pry
-    @user = User.find(session["user_id"])
-  erb :account
+    #&& Helper.is_logged_in?(session)
+    @user = User.find_by_id(session[:user_id])
+    #binding.pry   
+    if @user 
+      #binding.pry
+      erb :account
+    else
+      erb :error
+    end
+     
+    
   end
 
   get '/logout' do
